@@ -6,62 +6,76 @@ var _createClass = function () { function defineProperties(target, props) { for 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = d10ApiProvider;
-
-var _D10RestEvent = require('./D10RestEvent');
-
-var _D10RestEvent2 = _interopRequireDefault(_D10RestEvent);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function getRestEventName() {
-  return 'd10:rest';
-}
+var D10RestEvent = function () {
+  function D10RestEvent(action, data) {
+    _classCallCheck(this, D10RestEvent);
 
-function getEventName(action) {
-  return getRestEventName() + ':' + action;
-}
+    this.action = action;
+    this.data = data;
+  }
 
-function toSuccessName(eventName) {
-  return eventName + ':success';
-}
+  _createClass(D10RestEvent, [{
+    key: 'setResponse',
+    value: function setResponse(response) {
+      this.response = response;
+    }
+  }, {
+    key: 'setError',
+    value: function setError(error) {
+      this.error = error;
+    }
+  }, {
+    key: 'toJson',
+    value: function toJson() {
+      var obj = {
+        action: this.action,
+        data: this.data
+      };
 
-function toErrorName(eventName) {
-  return eventName + ':error';
-}
+      if (this.response) {
+        obj.response = this.response;
+      }
+      if (this.error) {
+        obj.error = this.error;
+      }
 
-function broadcastStart(pubsub, action, data) {
-  var eventName = getEventName(action);
-  var restEventName = getRestEventName();
-  var evt = new _D10RestEvent2.default(action, data);
+      return obj;
+    }
+  }]);
 
-  pubsub.$broadcast(restEventName, evt);
-  pubsub.$broadcast(eventName, evt);
+  return D10RestEvent;
+}();
 
-  return evt;
-}
+exports.default = D10RestEvent;
 
-function broadcastSuccessOrError(pubsub, action, evt, promise) {
-  var eventName = getEventName(action);
-  var restEventName = getRestEventName();
+},{}],2:[function(require,module,exports){
+'use strict';
 
-  return promise.then(function (response) {
-    evt.setResponse(response);
-    pubsub.$broadcast(toSuccessName(eventName), evt);
-    pubsub.$broadcast(toSuccessName(restEventName), evt);
+var _d10ApiProvider = require('./d10ApiProvider');
 
-    return response;
-  }, function (error) {
-    evt.setError(error);
-    pubsub.$broadcast(toErrorName(eventName), evt);
-    pubsub.$broadcast(toErrorName(restEventName), evt);
-    throw error;
+var _d10ApiProvider2 = _interopRequireDefault(_d10ApiProvider);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(function (angular) {
+  angular.module('d10-rest', []).service('d10API', function ($http, $rootScope) {
+    return (0, _d10ApiProvider2.default)(angular, $http, $rootScope);
   });
-}
+})(angular);
 
-function d10ApiProvider(angular, http, pubsub) {
+},{"./d10ApiProvider":3}],3:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (angular, http, pubsub) {
   var D10API = function () {
     function D10API(baseUrl) {
       _classCallCheck(this, D10API);
@@ -126,71 +140,60 @@ function d10ApiProvider(angular, http, pubsub) {
     return D10API;
   }();
 
-  return D10API;
-}
+  return new D10API();
+};
 
-},{"./D10RestEvent":2}],2:[function(require,module,exports){
-'use strict';
+var _D10RestEvent = require('./D10RestEvent');
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _D10RestEvent2 = _interopRequireDefault(_D10RestEvent);
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var D10RestEvent = function () {
-  function D10RestEvent(action, data) {
-    _classCallCheck(this, D10RestEvent);
+function getRestEventName() {
+  return 'd10:rest';
+}
 
-    this.action = action;
-    this.data = data;
-  }
+function getEventName(action) {
+  return getRestEventName() + ':' + action;
+}
 
-  _createClass(D10RestEvent, [{
-    key: 'setResponse',
-    value: function setResponse(response) {
-      this.response = response;
-    }
-  }, {
-    key: 'setError',
-    value: function setError(error) {
-      this.error = error;
-    }
-  }, {
-    key: 'toJson',
-    value: function toJson() {
-      var obj = {
-        action: this.action,
-        data: this.data
-      };
+function toSuccessName(eventName) {
+  return eventName + ':success';
+}
 
-      if (this.response) {
-        obj.response = this.response;
-      }
-      if (this.error) {
-        obj.error = this.error;
-      }
+function toErrorName(eventName) {
+  return eventName + ':error';
+}
 
-      return obj;
-    }
-  }]);
+function broadcastStart(pubsub, action, data) {
+  var eventName = getEventName(action);
+  var restEventName = getRestEventName();
+  var evt = new _D10RestEvent2.default(action, data);
 
-  return D10RestEvent;
-}();
+  pubsub.$broadcast(restEventName, evt);
+  pubsub.$broadcast(eventName, evt);
 
-exports.default = D10RestEvent;
+  return evt;
+}
 
-},{}],3:[function(require,module,exports){
-'use strict';
+function broadcastSuccessOrError(pubsub, action, evt, promise) {
+  var eventName = getEventName(action);
+  var restEventName = getRestEventName();
 
-(function (angular) {
-  var d10ApiProvider = require('./D10API');
+  return promise.then(function (response) {
+    evt.setResponse(response);
+    pubsub.$broadcast(toSuccessName(eventName), evt);
+    pubsub.$broadcast(toSuccessName(restEventName), evt);
 
-  angular.module('d10-rest', []).service('d10API', function ($http, $rootScope) {
-    return d10ApiProvider(angular, $http, $rootScope);
+    return response;
+  }, function (error) {
+    evt.setError(error);
+    pubsub.$broadcast(toErrorName(eventName), evt);
+    pubsub.$broadcast(toErrorName(restEventName), evt);
+    throw error;
   });
-})(angular);
+}
 
-},{"./D10API":1}]},{},[3]);
+},{"./D10RestEvent":1}]},{},[2]);
