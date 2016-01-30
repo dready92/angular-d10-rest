@@ -109,6 +109,18 @@ function d10ApiProvider(angular, http, pubsub) {
 
         return broadcastSuccessOrError(pubsub, action, evt, promise);
       }
+    }, {
+      key: 'getUserinfos',
+      value: function getUserinfos() {
+        var action = 'userinfos';
+        var evt = broadcastStart(pubsub, action);
+        var promise = http({
+          url: this.getEndPoint(action),
+          method: 'GET'
+        });
+
+        return broadcastSuccessOrError(pubsub, action, evt, promise);
+      }
     }]);
 
     return D10API;
