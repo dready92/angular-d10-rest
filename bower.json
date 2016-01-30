@@ -1,0 +1,24 @@
+{
+  "name": "angular-d10-rest",
+  "version": "1.0.0",
+  "authors": [
+    "mickael.bailly@free.fr"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dready92/angular-d10-rest.git"
+  },
+  "description": "Angular REST client API for the 10er10 jukebow webserver",
+  "main": "index.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "~1.4.9"
+  }
+}
