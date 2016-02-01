@@ -123,6 +123,40 @@ exports.default = function (angular, http, pubsub) {
 
         return broadcastSuccessOrError(pubsub, action, evt, promise);
       }
+
+      /*
+      * startkey: ["02 - The Medallion Calls","Klaus Badelt & Hans Zimmer"]
+      * startkey_docid: aa1937q8ub2ah6m1r947q7
+      *
+      */
+
+    }, {
+      key: 'listSongsSortedByTitle',
+      value: function listSongsSortedByTitle(startkey, startkey_docid) {
+        var params = undefined;
+
+        if (startkey) {
+          if (!angular.isArray(startkey)) {
+            throw new Error('getSongsSortedByTitle: startkey should be an array');
+          } else if (!startkey_docid) {
+            throw new Error('getSongsSortedByTitle: startkey_docid should be specified when startkey is specified');
+          }
+          params = {
+            startkey: startkey,
+            startkey_docid: startkey_docid
+          };
+        }
+
+        var action = 'listSongsSortedByTitle';
+        var evt = broadcastStart(pubsub, action, params);
+        var promise = http({
+          url: this.getEndPoint(['list', 'titles']),
+          method: 'POST',
+          params: params
+        });
+
+        return broadcastSuccessOrError(pubsub, action, evt, promise);
+      }
     }, {
       key: 'getUserinfos',
       value: function getUserinfos() {
